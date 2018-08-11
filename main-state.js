@@ -16,9 +16,11 @@ var DEBUG = true;
     create: function () {
       this.state = 'start';
       this.shape = Blocks.generateShape();
-      this.type = Blocks.generateType();
+      this.skill = Dog.generateSkill();
       Grid.initialize(12, 8);
-      Grid.start(Blocks.get(this.shape), this.type);
+      Grid.start(Blocks.get(this.shape), this.skill);
+
+      Dog.initialize();
 
       this.cursor = game.input.keyboard.addKeys({
         'up': Phaser.KeyCode.W,
@@ -33,6 +35,9 @@ var DEBUG = true;
       this.gridUpdateTime = 2000;
       this.gridUpdateCheck = null;
 
+      this.dogUpdateTime = 1000;
+      this.dogUpdateCheck = null;
+
       this.inputTime = 200;
       this.inputCheck = null;
     },
@@ -42,6 +47,7 @@ var DEBUG = true;
 
       this.checkInput(now);
       this.updateGrid(now);
+      this.updateDog(now);
 
       if (DEBUG) {
         Grid.print();
@@ -72,9 +78,26 @@ var DEBUG = true;
 
       this.gridUpdateCheck = this.gridUpdateCheck || now;
       if (this.gridUpdateCheck + this.gridUpdateTime > now) return;
+
       Grid.update();
 
       this.gridUpdateCheck = now;
+    },
+
+    updateDog(now) {
+      this.dogUpdateCheck = this.dogUpdateCheck || now;
+      if (this.dogUpdateCheck + this.dogUpdateTime > now) return;
+
+      Dog.update();
+      Dog.clearSkills();
+      Grid.evaluate(this.updateSkill);
+
+      this.dogUpdateCheck = now;
+    },
+
+    updateSkill(idx) {
+      if (idx == null) return;
+      Dog.skills[Dog.getSkill(idx)] += 1;
     }
   };
 

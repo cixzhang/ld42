@@ -50,10 +50,8 @@
     if (!cShape) return;
     if (touch.bottom) {
       land();
-      return true;
     }
     cy -= 1;
-    return false;
   }
 
   function detect() {
@@ -75,6 +73,14 @@
     cData = null;
   }
 
+  function evaluate(record) {
+    blocked.forEach(function (row) {
+      row.forEach(function (cell) {
+        record(cell);
+      });
+    });
+  }
+
   window.Grid = {
     size: size,
     print: function () {
@@ -86,5 +92,6 @@
     move: move,
     update: update,
     detect: detect,
+    evaluate: evaluate,
   };
 })();

@@ -8,7 +8,7 @@
       topRight: [0,0],
     },
     { // 1
-      blocks: [[0,0][1,0]],
+      blocks: [[0,0],[1,0]],
       botLeft: [0,0],
       topRight: [1,0],
     },
@@ -22,16 +22,6 @@
       botLeft: [0,0],
       topRight: [1,1],
     },
-  ];
-
-  var LIVING_TYPES = {0:1, 1:1, 2:1};
-  var types = [
-    'breathe',
-    'eat',
-    'poop',
-    'mathphysics',
-    'social',
-    'dog',
   ];
 
   function rotate(shape, dir) {
@@ -56,17 +46,11 @@
   }
 
   function generateShape() {
-    return _.random(0, shapes.length);
-  }
-
-  function generateType() {
-    return _.random(0, types.length);
+    return _.random(0, shapes.length - 1);
   }
 
   var Blocks = {
-    LIVING_TYPES: LIVING_TYPES,
     shapes: shapes,
-    types: types,
     get: function (idx) {
       return shapes[idx];
     },
@@ -80,7 +64,6 @@
       rotate(shape, 1);
     },
     generateShape: generateShape,
-    generateType: generateType,
   };
 
   window.Blocks = Blocks;
