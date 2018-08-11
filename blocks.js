@@ -1,26 +1,37 @@
+/* globals _ */
 // Block shapes and physics
 (function () {
   var shapes = [
-    {
+    { // 0
       blocks: [[0,0]],
       botLeft: [0,0],
       topRight: [0,0],
     },
-    {
+    { // 1
       blocks: [[0,0][1,0]],
       botLeft: [0,0],
       topRight: [1,0],
     },
-    {
+    { // 2
       blocks: [[0,0],[1,0],[2,0],[3,0]],
       botLeft: [0,0],
       topRight: [3,0],
     },
-    {
+    { // 3
       blocks: [[0,0],[1,0],[1,1],[0,1]],
       botLeft: [0,0],
       topRight: [1,1],
     },
+  ];
+
+  var LIVING_TYPES = {0:1, 1:1, 2:1};
+  var types = [
+    'breathe',
+    'eat',
+    'poop',
+    'mathphysics',
+    'social',
+    'dog',
   ];
 
   function rotate(shape, dir) {
@@ -44,10 +55,23 @@
     shape.topRight[1] = maxY;
   }
 
+  function generateShape() {
+    return _.random(0, shapes.length);
+  }
+
+  function generateType() {
+    return _.random(0, types.length);
+  }
+
   var Blocks = {
+    LIVING_TYPES: LIVING_TYPES,
     shapes: shapes,
+    types: types,
     get: function (idx) {
-      return Blocks.shapes[idx];
+      return shapes[idx];
+    },
+    getType: function (idx) {
+      return types[idx];
     },
     rotateCW: function rotateCW(shape) {
       rotate(shape, -1);
@@ -55,6 +79,8 @@
     rotateCCW: function rotateCCW(shape) {
       rotate(shape, 1);
     },
+    generateShape: generateShape,
+    generateType: generateType,
   };
 
   window.Blocks = Blocks;

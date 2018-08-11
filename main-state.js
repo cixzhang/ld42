@@ -15,9 +15,10 @@ var DEBUG = true;
 
     create: function () {
       this.state = 'start';
-      this.shape = 0;
+      this.shape = Blocks.generateShape();
+      this.type = Blocks.generateType();
       Grid.initialize(12, 8);
-      Grid.start(Blocks.get(this.shape), 'x');
+      Grid.start(Blocks.get(this.shape), this.type);
 
       this.cursor = game.input.keyboard.addKeys({
         'up': Phaser.KeyCode.W,
