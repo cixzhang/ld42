@@ -19,9 +19,9 @@
     cy = 0;
     cShape = null;
 
-    for (var i = 0; i < x; i++) {
+    for (var i = 0; i < y + 5; i++) {
       blocked[i] = [];
-      for (var j = 0; j < y; j++) {
+      for (var j = 0; j < x; j++) {
         blocked[i][j] = null;
       }
     }
@@ -59,30 +59,40 @@
     cShape.blocks.forEach(function (block) {
       var x = block[0] + cx;
       var y = block[1] + cy;
-      touch.left = touch.left || x === 0 || blocked[x - 1][y];
-      touch.right = touch.right || x === (size[0] - 1) || blocked[x + 1][y];
-      touch.bottom = touch.bottom || y === 0 || blocked[x][y - 1];
+      touch.left = touch.left || x === 0 || blocked[y][x - 1];
+      touch.right = touch.right || x === (size[1] - 1) || blocked[y][x + 1];
+      touch.bottom = touch.bottom || y === 0 || blocked[y - 1][x];
     });
   }
 
   function land() {
     cShape.blocks.forEach(function (block) {
-      blocked[block[0] + cx][block[1] + cy] = cData;
+      blocked[block[1] + cy][block[0] + cx] = cData;
     });
     cShape = null;
     cData = null;
   }
 
   function evaluate(record) {
-    blocked.forEach(function (row) {
-      row.forEach(function (cell) {
-        record(cell);
+    blocked.forEach(function (row, i) {
+      row.forEach(function (cell, j) {
+        record(cell, i, j);
       });
+    });
+  }
+
+  function evaluateShape(record) {
+    if (!cShape) return;
+    cShape.blocks.forEach(function (block) {
+      var x = block[0] + cx;
+      var y = block[1] + cy;
+      record(cData, y, x);
     });
   }
 
   window.Grid = {
     size: size,
+    blocked: blocked,
     print: function () {
       console.log(cx, cy);
       console.log(JSON.stringify(blocked));
@@ -93,5 +103,6 @@
     update: update,
     detect: detect,
     evaluate: evaluate,
+    evaluateShape: evaluateShape,
   };
 })();

@@ -1,4 +1,4 @@
-/* globals Phaser _ Grid Blocks */
+/* globals Phaser game _ Grid Blocks */
 /* eslint no-console: 0 */
 
 var DEBUG = true;
@@ -11,6 +11,8 @@ var DEBUG = true;
 
       game.renderer.renderSession.roundPixels = true;
       Phaser.Canvas.setImageRenderingCrisp(this.game.canvas);
+
+      game.load.spritesheet('blocks', 'assets/blocks.png', 8, 8);
     },
 
     create: function () {
@@ -38,8 +40,24 @@ var DEBUG = true;
       this.dogUpdateTime = 1000;
       this.dogUpdateCheck = null;
 
-      this.inputTime = 200;
+      this.inputTime = 100;
       this.inputCheck = null;
+
+      // Rendering
+      this.renderBlock = this.renderBlock.bind(this);
+      var gridX = 80;
+      var gridY = 160;
+      this.grid = [];
+      Grid.evaluate((function (cell, i, j) {
+        this.grid[i] = this.grid[i] || [];
+        this.grid[i][j] = game.add.sprite(
+          gridX + (j * 9),
+          gridY - (i * 9),
+          'blocks',
+          0,
+        );
+        this.renderBlock(cell, i, j);
+      }).bind(this));
     },
 
     update: function () {
@@ -49,9 +67,7 @@ var DEBUG = true;
       this.updateGrid(now);
       this.updateDog(now);
 
-      if (DEBUG) {
-        Grid.print();
-      }
+      this.renderGrid(now);
     },
 
     checkInput(now) {
@@ -98,7 +114,16 @@ var DEBUG = true;
     updateSkill(idx) {
       if (idx == null) return;
       Dog.skills[Dog.getSkill(idx)] += 1;
-    }
+    },
+
+    renderGrid(now) {
+      Grid.evaluate(this.renderBlock);
+      Grid.evaluateShape(this.renderBlock);
+    },
+
+    renderBlock(cell, i, j) {
+      this.grid[i][j].frame = cell != null ? cell : Dog.skillList.length + (i >= Grid.size[1]);
+    },
   };
 
   window.mainState = mainState;
