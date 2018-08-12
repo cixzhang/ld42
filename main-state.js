@@ -17,10 +17,9 @@ var DEBUG = true;
 
     create: function () {
       this.state = 'start';
-      this.shape = Blocks.generateShape();
-      this.skill = Dog.generateSkill();
+      this.shape;
+      this.skill;
       Grid.initialize(12, 8);
-      Grid.start(Blocks.get(this.shape), this.skill);
 
       Dog.initialize();
 
@@ -69,7 +68,18 @@ var DEBUG = true;
 
       this.renderGrid(now);
 
+
+      this.startShape(now);
+
       Grid.print();
+    },
+
+    startShape(now) {
+      if (Grid.ready()) {
+        this.shape = Blocks.generateShape();
+        this.skill = Dog.generateSkill();
+        Grid.start(Blocks.get(this.shape), this.skill);
+      }
     },
 
     checkInput(now) {

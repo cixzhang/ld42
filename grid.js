@@ -112,6 +112,10 @@
     });
   }
 
+  function ready() {
+    return !cShape;
+  }
+
   window.Grid = {
     size: size,
     blocked: blocked,
@@ -127,5 +131,6 @@
     check: check,
     evaluate: evaluate,
     evaluateShape: evaluateShape,
+    ready: ready,
   };
 })();
