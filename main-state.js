@@ -1,4 +1,4 @@
-/* globals Phaser game _ Grid Blocks */
+/* globals Phaser game _ Grid Blocks TextRenderer */
 /* eslint no-console: 0 */
 
 var DEBUG = true;
@@ -14,6 +14,8 @@ var DEBUG = true;
 
       game.load.spritesheet('blocks', 'assets/blocks.png', 8, 8);
       game.load.spritesheet('palette', 'assets/palette.png', 14, 14);
+
+      TextRenderer.preload();
     },
 
     create: function () {
@@ -84,6 +86,13 @@ var DEBUG = true;
       this.healthBar.addChild(this.healthBarAmt);
       this.healthBarAmt.height = 1;
       this.healthBar.fixedToCamera = true;
+
+      // Text
+      this.dialogBox = new Phaser.Group(game);
+      this.dialogBox.x = 10;
+      this.dialogBox.y = 200;
+      this.dialog = TextRenderer.makeTextSprite('Hello world!', 50, 50, 0xFF0000);
+      this.dialogBox.addChild(this.dialog);
     },
 
     update: function () {
