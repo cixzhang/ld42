@@ -7,13 +7,14 @@ var DEBUG = true;
     preload: function () {
       // game scaling
       game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
-      game.scale.setUserScale(2, 2);
+      game.scale.setUserScale(1, 1);
 
       game.renderer.renderSession.roundPixels = true;
       Phaser.Canvas.setImageRenderingCrisp(this.game.canvas);
 
       game.load.spritesheet('blocks', 'assets/blocks.png', 8, 8);
       game.load.spritesheet('palette', 'assets/palette.png', 14, 14);
+      game.load.spritesheet('dialogbox', 'assets/dialogbox.png', 160, 40);
 
       TextRenderer.preload();
     },
@@ -22,7 +23,7 @@ var DEBUG = true;
       this.state = 'start';
       this.shape;
       this.skill;
-      Grid.initialize(12, 8);
+      Grid.initialize(11, 8);
 
       Dog.initialize();
 
@@ -47,14 +48,34 @@ var DEBUG = true;
       this.inputTime = 200;
       this.inputCheck = null;
 
+      // Text
+      var dialogScale = 2;
+      this.dialogPadding = 8;
+      this.dialogBox = new Phaser.Group(game);
+      this.dialogBoxBg = new Phaser.Sprite(game, 0, 0, 'dialogbox', 0);
+      this.dialogBoxBg.scale.x = dialogScale;
+      this.dialogBoxBg.scale.y = dialogScale;
+      this.dialogBox.addChild(this.dialogBoxBg);
+      this.dialog = TextRenderer.makeTextSprite(
+        'test',
+        this.dialogBox.width - 2 * this.dialogPadding,
+        this.dialogBox.height - 2 * this.dialogPadding,
+        0xFF0000
+      );
+      this.dialog.x = this.dialogPadding;
+      this.dialog.y = this.dialogPadding;
+      this.dialogBox.addChild(this.dialog);
+      this.dialogBox.x = (800 - this.dialogBox.width) / 2;
+      this.dialogBox.y = 60;
+
       // Grid
       this.renderBlock = this.renderBlock.bind(this);
       this.dropRow = this.dropRow.bind(this);
       this.dropColumn = this.dropColumn.bind(this);
       this.dropBlock = this.dropBlock.bind(this);
-      var gridX = 80;
-      var gridY = 220;
-      var gridScale = 1.5;
+      var gridScale = 2;
+      var gridX = (800 - Grid.size[0] * gridScale * 8) / 2;
+      var gridY = 280;
       this.grid = [];
       this.animationGrid = [];
       Grid.evaluate((function (cell, i, j) {
@@ -86,13 +107,6 @@ var DEBUG = true;
       this.healthBar.addChild(this.healthBarAmt);
       this.healthBarAmt.height = 1;
       this.healthBar.fixedToCamera = true;
-
-      // Text
-      this.dialogBox = new Phaser.Group(game);
-      this.dialogBox.x = 10;
-      this.dialogBox.y = 200;
-      this.dialog = TextRenderer.makeTextSprite('Hello world!', 50, 50, 0xFF0000);
-      this.dialogBox.addChild(this.dialog);
     },
 
     update: function () {
@@ -116,13 +130,17 @@ var DEBUG = true;
         Grid.update();
         Grid.tryLand();
         this.inputCheck = now;
-      } else if (this.cursor.left.isDown) {
+      }
+
+      if (this.cursor.left.isDown) {
         Grid.move(-1);
         this.inputCheck = now;
       } else if (this.cursor.right.isDown) {
         Grid.move(1);
         this.inputCheck = now;
-      } else if (this.cursor.rotateCW.isDown) {
+      }
+
+      if (this.cursor.rotateCW.isDown || this.cursor.up.isDown) {
         Blocks.rotateCW(Blocks.get(this.shape), Grid.check);
         this.inputCheck = now;
       } else if (this.cursor.rotateCCW.isDown) {
