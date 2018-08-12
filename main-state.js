@@ -7,7 +7,7 @@ var DEBUG = true;
     preload: function () {
       // game scaling
       game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
-      game.scale.setUserScale(3, 3);
+      game.scale.setUserScale(2, 2);
 
       game.renderer.renderSession.roundPixels = true;
       Phaser.Canvas.setImageRenderingCrisp(this.game.canvas);
@@ -51,25 +51,30 @@ var DEBUG = true;
       this.dropColumn = this.dropColumn.bind(this);
       this.dropBlock = this.dropBlock.bind(this);
       var gridX = 80;
-      var gridY = 160;
+      var gridY = 220;
+      var gridScale = 1.5;
       this.grid = [];
       this.animationGrid = [];
       Grid.evaluate((function (cell, i, j) {
         this.grid[i] = this.grid[i] || [];
         this.animationGrid[i] = this.animationGrid[i] || [];
         this.grid[i][j] = game.add.sprite(
-          gridX + (j * 9),
-          gridY - (i * 9),
+          gridX + (j * (8 * gridScale + 1)),
+          gridY - (i * (8 * gridScale + 1)),
           'blocks',
           0,
         );
+        this.grid[i][j].width = 8 * gridScale;
+        this.grid[i][j].height = 8 * gridScale;
         // keep the animation grid clear until we need to animate
         this.animationGrid[i][j] = game.add.sprite(
-          gridX + (j * 9),
-          gridY - (i * 9),
+          gridX + (j * (8 * gridScale + 1)),
+          gridY - (i * (8 * gridScale + 1)),
           'blocks',
           8,
         );
+        this.animationGrid[i][j].width = 8 * gridScale;
+        this.animationGrid[i][j].height = 8 * gridScale;
         this.renderBlock(cell, i, j);
       }).bind(this));
 
