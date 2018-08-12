@@ -48,6 +48,7 @@ var DEBUG = true;
       // Grid
       this.renderBlock = this.renderBlock.bind(this);
       this.dropRow = this.dropRow.bind(this);
+      this.dropColumn = this.dropColumn.bind(this);
       this.dropBlock = this.dropBlock.bind(this);
       var gridX = 80;
       var gridY = 160;
@@ -146,6 +147,9 @@ var DEBUG = true;
       var fullRows = Grid.findFullRows();
       fullRows.forEach(this.dropRow);
 
+      var fullColumns = Grid.findOverfilledColumns();
+      fullColumns.forEach(this.dropColumn);
+
       this.gridLandCheck = now;
     },
 
@@ -180,6 +184,15 @@ var DEBUG = true;
         dropBlock(block, i, j);
       });
       Grid.clearRow(i);
+    },
+
+    dropColumn(j) {
+      var dropBlock = this.dropBlock;
+      this.animationGrid.forEach(function (row, i) {
+        var block = row[j];
+        dropBlock(block, i, j);
+      });
+      Grid.clearColumn(j);
     },
 
     dropBlock(block, i, j) {

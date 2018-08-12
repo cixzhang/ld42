@@ -147,8 +147,32 @@
     blocked.push(row);
   }
 
+  function findOverfilledColumns() {
+    var indices = {};
+    for (var i = 0; i < addHeight; i++) {
+      var row = blocked[blocked.length - i - 1];
+      row.forEach(function (cell, i) {
+        if (cell != null) {
+          indices[i] = true;
+        }
+      });
+    }
+    return Object.keys(indices).map(Number);
+  }
+
+  function clearColumn(index) {
+    blocked.forEach(function (row) {
+      row.forEach(function(cell, i) {
+        if (i === index) {
+          row[i] = null;
+        }
+      });
+    });
+  }
+
   window.Grid = {
     size: size,
+    addHeight: addHeight,
     blocked: blocked,
     print: function () {
       console.log(cx, cy);
@@ -166,5 +190,7 @@
     ready: ready,
     findFullRows: findFullRows,
     clearRow: clearRow,
+    findOverfilledColumns: findOverfilledColumns,
+    clearColumn: clearColumn,
   };
 })();
