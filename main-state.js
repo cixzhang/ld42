@@ -40,7 +40,7 @@ var DEBUG = true;
       this.dogUpdateTime = 1000;
       this.dogUpdateCheck = null;
 
-      this.inputTime = 100;
+      this.inputTime = 200;
       this.inputCheck = null;
 
       // Rendering
@@ -77,17 +77,20 @@ var DEBUG = true;
       if (this.inputCheck + this.inputTime > now) return;
       if (this.cursor.down.isDown) {
         Grid.update();
+        this.inputCheck = now;
       } else if (this.cursor.left.isDown) {
         Grid.move(-1);
+        this.inputCheck = now;
       } else if (this.cursor.right.isDown) {
         Grid.move(1);
+        this.inputCheck = now;
       } else if (this.cursor.rotateCW.isDown) {
-        Blocks.rotateCW(Blocks.get(this.shape));
+        Blocks.rotateCW(Blocks.get(this.shape), Grid.check);
+        this.inputCheck = now;
       } else if (this.cursor.rotateCCW.isDown) {
-        Blocks.rotateCCW(Blocks.get(this.shape));
+        Blocks.rotateCCW(Blocks.get(this.shape), Grid.check);
+        this.inputCheck = now;
       }
-
-      this.inputCheck = now;
     },
 
     updateGrid(now) {

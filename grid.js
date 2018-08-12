@@ -6,6 +6,7 @@
   var cy;
   var cShape;
   var cData;
+  var addHeight = 5;
   var touch = {
     left: false,
     right: false,
@@ -19,7 +20,7 @@
     cy = 0;
     cShape = null;
 
-    for (var i = 0; i < y + 5; i++) {
+    for (var i = 0; i < y + addHeight; i++) {
       blocked[i] = [];
       for (var j = 0; j < x; j++) {
         blocked[i][j] = null;
@@ -72,6 +73,20 @@
     touch.bottom = bottom;
   }
 
+  function check(blocks) {
+    var collision = false;
+    blocks.forEach(function (block) {
+      var x = block[0] + cx;
+      var y = block[1] + cy;
+      var outLeft = x < 0;
+      var outRight = x > size[0] - 1;
+      var outBottom = y < 0;
+      collision = collision || blocked[y][x] ||
+        outLeft || outRight || outBottom;
+    });
+    return collision;
+  }
+
   function land() {
     cShape.blocks.forEach(function (block) {
       blocked[block[1] + cy][block[0] + cx] = cData;
@@ -109,6 +124,7 @@
     move: move,
     update: update,
     detect: detect,
+    check: check,
     evaluate: evaluate,
     evaluateShape: evaluateShape,
   };
