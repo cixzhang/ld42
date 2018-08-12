@@ -36,6 +36,8 @@ var DEBUG = true;
       // Timers
       this.gridUpdateTime = 2000;
       this.gridUpdateCheck = null;
+      this.gridLandTime = 900;
+      this.gridLandCheck = null;
 
       this.dogUpdateTime = 1000;
       this.dogUpdateCheck = null;
@@ -45,16 +47,27 @@ var DEBUG = true;
 
       // Grid
       this.renderBlock = this.renderBlock.bind(this);
+      this.dropRow = this.dropRow.bind(this);
+      this.dropBlock = this.dropBlock.bind(this);
       var gridX = 80;
       var gridY = 160;
       this.grid = [];
+      this.animationGrid = [];
       Grid.evaluate((function (cell, i, j) {
         this.grid[i] = this.grid[i] || [];
+        this.animationGrid[i] = this.animationGrid[i] || [];
         this.grid[i][j] = game.add.sprite(
           gridX + (j * 9),
           gridY - (i * 9),
           'blocks',
           0,
+        );
+        // keep the animation grid clear until we need to animate
+        this.animationGrid[i][j] = game.add.sprite(
+          gridX + (j * 9),
+          gridY - (i * 9),
+          'blocks',
+          8,
         );
         this.renderBlock(cell, i, j);
       }).bind(this));
@@ -72,22 +85,13 @@ var DEBUG = true;
 
       this.checkInput(now);
       this.updateGrid(now);
+      this.updateGridLand(now);
       this.updateDog(now);
 
       this.renderGrid(now);
       this.renderHealth(now);
 
-      this.startShape(now);
-
       Grid.print();
-    },
-
-    startShape(now) {
-      if (Grid.ready()) {
-        this.shape = Blocks.generateShape();
-        this.skill = Dog.generateSkill();
-        Grid.start(Blocks.get(this.shape), this.skill);
-      }
     },
 
     checkInput(now) {
@@ -116,12 +120,33 @@ var DEBUG = true;
       // always detect for collision
       Grid.detect();
 
+      var fullRows = Grid.findFullRows();
+      fullRows.forEach(this.dropRow);
+
+      if (Grid.ready() && !fullRows.length) {
+        this.shape = Blocks.generateShape();
+        this.skill = Dog.generateSkill();
+        Grid.start(Blocks.get(this.shape), this.skill);
+      }
+
       this.gridUpdateCheck = this.gridUpdateCheck || now;
       if (this.gridUpdateCheck + this.gridUpdateTime > now) return;
 
       Grid.update();
 
       this.gridUpdateCheck = now;
+    },
+
+    updateGridLand(now) {
+      this.gridLandCheck = this.gridLandCheck || now;
+      if (this.gridLandCheck + this.gridLandTime > now) return;
+
+      Grid.tryLand();
+
+      var fullRows = Grid.findFullRows();
+      fullRows.forEach(this.dropRow);
+
+      this.gridLandCheck = now;
     },
 
     updateDog(now) {
@@ -147,6 +172,31 @@ var DEBUG = true;
 
     renderBlock(cell, i, j) {
       this.grid[i][j].frame = cell != null ? cell : Dog.skillList.length + (i >= Grid.size[1]);
+    },
+
+    dropRow(i) {
+      var dropBlock = this.dropBlock;
+      this.animationGrid[i].forEach(function (block, j) {
+        dropBlock(block, i, j);
+      });
+      Grid.clearRow(i);
+    },
+
+    dropBlock(block, i, j) {
+      block.frame = this.grid[i][j].frame;
+      game.add.tween(block)
+        .to(
+          {
+            y: block.y + 300,
+            x: block.x + _.random(-10, 10),
+            angle: _.random(-200, 200),
+          },
+          2000, Phaser.Easing.Linear.None, true, 0, 0)
+        .onComplete.addOnce(() => {
+          block.frame = 8;
+          block.x = this.grid[i][j].x;
+          block.y = this.grid[i][j].y;
+        });
     },
 
     renderHealth(now) {

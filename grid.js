@@ -95,6 +95,7 @@
   }
 
   function land() {
+    if (!cShape) return;
     cShape.blocks.forEach(function (block) {
       blocked[block[1] + cy][block[0] + cx] = cData;
     });
@@ -123,6 +124,29 @@
     return !cShape;
   }
 
+  function findFullRows() {
+    var indices = [];
+    blocked.forEach(function (row, i) {
+      var isFull = row.every(function (cell) {
+        return cell != null;
+      });
+
+      if (isFull) indices.push(i);
+    });
+
+    return indices;
+  }
+
+  function clearRow(index) {
+    const row = blocked.splice(index, 1);
+    for (var i = 0; i < row.length; i++) {
+      row[i] = null;
+    }
+
+    // add cleared row back to top
+    blocked.push(row);
+  }
+
   window.Grid = {
     size: size,
     blocked: blocked,
@@ -140,5 +164,7 @@
     evaluate: evaluate,
     evaluateShape: evaluateShape,
     ready: ready,
+    findFullRows: findFullRows,
+    clearRow: clearRow,
   };
 })();
