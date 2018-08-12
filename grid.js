@@ -50,19 +50,26 @@
     if (!cShape) return;
     if (touch.bottom) {
       land();
+      return;
     }
     cy -= 1;
   }
 
   function detect() {
     if (!cShape) return;
+    var left = false;
+    var right = false;
+    var bottom = false;
     cShape.blocks.forEach(function (block) {
       var x = block[0] + cx;
       var y = block[1] + cy;
-      touch.left = touch.left || x === 0 || blocked[y][x - 1];
-      touch.right = touch.right || x === (size[1] - 1) || blocked[y][x + 1];
-      touch.bottom = touch.bottom || y === 0 || blocked[y - 1][x];
+      left = left || x === 0 || blocked[y][x - 1];
+      right = right || x === (size[0] - 1) || blocked[y][x + 1];
+      bottom = bottom || y === 0 || blocked[y - 1][x];
     });
+    touch.left = left;
+    touch.right = right;
+    touch.bottom = bottom;
   }
 
   function land() {
@@ -95,7 +102,7 @@
     blocked: blocked,
     print: function () {
       console.log(cx, cy);
-      console.log(JSON.stringify(blocked));
+      console.log(JSON.stringify(touch));
     },
     initialize: initialize,
     start: start,

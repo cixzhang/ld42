@@ -68,6 +68,8 @@ var DEBUG = true;
       this.updateDog(now);
 
       this.renderGrid(now);
+
+      Grid.print();
     },
 
     checkInput(now) {
