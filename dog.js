@@ -10,9 +10,16 @@
     dog: 0,
   };
 
+  var skillList = Object.keys(skills);
+  var skillIndices = {};
+  skillList.forEach((skill, i) => {
+    skillIndices[skill] = i;
+  });
+
   var Dog = {
-    skills,
-    skillList: Object.keys(skills),
+    skills: skills,
+    skillList: skillList,
+    skillIndices: skillIndices,
     life: 100,
     maxLife: 100,
     initialize: function initialize() {

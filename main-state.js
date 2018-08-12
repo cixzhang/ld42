@@ -1,4 +1,4 @@
-/* globals Phaser game _ Grid Blocks TextRenderer */
+/* globals Phaser game _ Grid Blocks TextRenderer Dog GameEvents */
 /* eslint no-console: 0 */
 
 var DEBUG = true;
@@ -26,6 +26,7 @@ var DEBUG = true;
       Grid.initialize(11, 8);
 
       Dog.initialize();
+      GameEvents.initialize();
 
       this.cursor = game.input.keyboard.addKeys({
         'up': Phaser.KeyCode.W,
@@ -48,7 +49,14 @@ var DEBUG = true;
       this.inputTime = 200;
       this.inputCheck = null;
 
+      this.eventReadyWillResetTime = 5000;
+      this.eventReadyWillReset = null;
+
+      this.clearDialogTime = 3000;
+
       // Text
+      this.dialogTimeout = null;
+      this.clearText = this.clearText.bind(this);
       var dialogScale = 2;
       this.dialogPadding = 8;
       this.dialogBox = new Phaser.Group(game);
@@ -56,17 +64,9 @@ var DEBUG = true;
       this.dialogBoxBg.scale.x = dialogScale;
       this.dialogBoxBg.scale.y = dialogScale;
       this.dialogBox.addChild(this.dialogBoxBg);
-      this.dialog = TextRenderer.makeTextSprite(
-        'test',
-        this.dialogBox.width - 2 * this.dialogPadding,
-        this.dialogBox.height - 2 * this.dialogPadding,
-        0xFF0000
-      );
-      this.dialog.x = this.dialogPadding;
-      this.dialog.y = this.dialogPadding;
-      this.dialogBox.addChild(this.dialog);
       this.dialogBox.x = (800 - this.dialogBox.width) / 2;
       this.dialogBox.y = 60;
+      this.dialogBox.alpha = 0;
 
       // Grid
       this.renderBlock = this.renderBlock.bind(this);
@@ -107,12 +107,18 @@ var DEBUG = true;
       this.healthBar.addChild(this.healthBarAmt);
       this.healthBarAmt.height = 1;
       this.healthBar.fixedToCamera = true;
+
+      // Events
+      this.tutorial = 0;
+      this.eventReady = true;
     },
 
     update: function () {
       var now = Date.now();
 
       this.checkInput(now);
+      this.checkEvent(now);
+
       this.updateGrid(now);
       this.updateGridLand(now);
       this.updateDog(now);
@@ -149,18 +155,41 @@ var DEBUG = true;
       }
     },
 
+    checkEvent(now) {
+      if (this.eventReady) {
+        var event;
+        if (this.tutorial < GameEvents.startEvents.length) {
+          event = GameEvents.startEvents[this.tutorial];
+          this.tutorial += 1;
+        } else {
+          event = GameEvents.generate();
+        }
+
+        if (event.shape) {
+          this.shape = event.shape;
+          this.skill = event.skill;
+          Grid.start(Blocks.get(this.shape), this.skill);
+        } else {
+          this.eventReadyWillReset = now;
+        }
+
+        var text = GameEvents.resolve(event);
+        this.renderText(text);
+        this.eventReady = false;
+      }
+
+      if (
+        this.eventReadyWillReset &&
+        this.eventReadyWillReset + this.eventReadyWillResetTime <= now
+      ) {
+        this.eventReady = true;
+        this.eventReadyWillReset = null;
+      }
+    },
+
     updateGrid(now) {
       // always detect for collision
       Grid.detect();
-
-      var fullRows = Grid.findFullRows();
-      fullRows.forEach(this.dropRow);
-
-      if (Grid.ready() && !fullRows.length) {
-        this.shape = Blocks.generateShape();
-        this.skill = Dog.generateSkill();
-        Grid.start(Blocks.get(this.shape), this.skill);
-      }
 
       this.gridUpdateCheck = this.gridUpdateCheck || now;
       if (this.gridUpdateCheck + this.gridUpdateTime > now) return;
@@ -181,6 +210,15 @@ var DEBUG = true;
 
       var fullColumns = Grid.findOverfilledColumns();
       fullColumns.forEach(this.dropColumn);
+
+      if (
+        !this.eventReady &&
+        !this.eventReadyWillReset &&
+        Grid.ready() &&
+        !fullRows.length
+      ) {
+        this.eventReady = true;
+      }
 
       this.gridLandCheck = now;
     },
@@ -246,6 +284,28 @@ var DEBUG = true;
 
     renderHealth(now) {
       this.healthBarAmt.width = (this.healthBar.width - 1) * Math.max(Dog.life / Dog.maxLife, 0);
+    },
+
+    renderText(text) {
+      clearTimeout(this.dialogTimeout);
+      this.dialogBox.removeChild(this.dialog);
+      this.dialog = TextRenderer.makeTextSprite(
+        text,
+        this.dialogBox.width - 2 * this.dialogPadding,
+        this.dialogBox.height - 2 * this.dialogPadding,
+        0xFF0000
+      );
+      this.dialog.x = this.dialogPadding;
+      this.dialog.y = this.dialogPadding;
+      this.dialogBox.addChild(this.dialog);
+
+      this.dialogBox.alpha = 1;
+
+      this.dialogTimeout = setTimeout(this.clearText, this.clearDialogTime);
+    },
+
+    clearText() {
+      this.dialogBox.alpha = 0;
     },
   };
 
