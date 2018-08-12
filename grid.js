@@ -64,9 +64,9 @@
     cShape.blocks.forEach(function (block) {
       var x = block[0] + cx;
       var y = block[1] + cy;
-      left = left || x === 0 || blocked[y][x - 1];
-      right = right || x === (size[0] - 1) || blocked[y][x + 1];
-      bottom = bottom || y === 0 || blocked[y - 1][x];
+      left = left || x === 0 || blocked[y][x - 1] != null;
+      right = right || x === (size[0] - 1) || blocked[y][x + 1] != null;
+      bottom = bottom || y === 0 || blocked[y - 1][x] != null;
     });
     touch.left = left;
     touch.right = right;
@@ -81,7 +81,7 @@
       var outLeft = x < 0;
       var outRight = x > size[0] - 1;
       var outBottom = y < 0;
-      collision = collision || blocked[y][x] ||
+      collision = collision || blocked[y][x] != null ||
         outLeft || outRight || outBottom;
     });
     return collision;
