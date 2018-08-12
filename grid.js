@@ -32,7 +32,7 @@
     cShape = shape;
     cData = data;
     cx = Math.floor(size[0] / 2);
-    cy = size[1] + 1;
+    cy = size[1] + 2;
     touch.left = false;
     touch.right = false;
     touch.bottom = false;
@@ -49,8 +49,7 @@
 
   function update() {
     if (!cShape) return;
-    if (touch.bottom) {
-      land();
+    if (tryLand()) {
       return;
     }
     cy -= 1;
@@ -85,6 +84,14 @@
         outLeft || outRight || outBottom;
     });
     return collision;
+  }
+
+  function tryLand() {
+    if (touch.bottom) {
+      land();
+      return true;
+    }
+    return false;
   }
 
   function land() {
@@ -127,6 +134,7 @@
     start: start,
     move: move,
     update: update,
+    tryLand: tryLand,
     detect: detect,
     check: check,
     evaluate: evaluate,

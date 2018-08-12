@@ -13,6 +13,7 @@ var DEBUG = true;
       Phaser.Canvas.setImageRenderingCrisp(this.game.canvas);
 
       game.load.spritesheet('blocks', 'assets/blocks.png', 8, 8);
+      game.load.spritesheet('palette', 'assets/palette.png', 14, 14);
     },
 
     create: function () {
@@ -42,7 +43,7 @@ var DEBUG = true;
       this.inputTime = 200;
       this.inputCheck = null;
 
-      // Rendering
+      // Grid
       this.renderBlock = this.renderBlock.bind(this);
       var gridX = 80;
       var gridY = 160;
@@ -57,6 +58,13 @@ var DEBUG = true;
         );
         this.renderBlock(cell, i, j);
       }).bind(this));
+
+      // Health
+      this.healthBar = game.add.tileSprite(game.width / 4, 8, game.width / 2, 3, 'palette', 28);
+      this.healthBarAmt = new Phaser.Sprite(game, 1, 1, 'palette', 27);
+      this.healthBar.addChild(this.healthBarAmt);
+      this.healthBarAmt.height = 1;
+      this.healthBar.fixedToCamera = true;
     },
 
     update: function () {
@@ -67,7 +75,7 @@ var DEBUG = true;
       this.updateDog(now);
 
       this.renderGrid(now);
-
+      this.renderHealth(now);
 
       this.startShape(now);
 
@@ -87,6 +95,7 @@ var DEBUG = true;
       if (this.inputCheck + this.inputTime > now) return;
       if (this.cursor.down.isDown) {
         Grid.update();
+        Grid.tryLand();
         this.inputCheck = now;
       } else if (this.cursor.left.isDown) {
         Grid.move(-1);
@@ -138,6 +147,10 @@ var DEBUG = true;
 
     renderBlock(cell, i, j) {
       this.grid[i][j].frame = cell != null ? cell : Dog.skillList.length + (i >= Grid.size[1]);
+    },
+
+    renderHealth(now) {
+      this.healthBarAmt.width = (this.healthBar.width - 1) * Math.max(Dog.life / Dog.maxLife, 0);
     },
   };
 
