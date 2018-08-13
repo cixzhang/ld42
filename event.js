@@ -1,7 +1,7 @@
 (function() {
   const rewards = {
     picture: 0,
-    beaker: 0,
+    flask: 0,
     pencil: 0,
     textbook: 0,
     stick: 0,
@@ -182,7 +182,7 @@
       success: 'All that dog cramming was worth it. You passed the exam!',
       fail: 'You weren\'t sure what to do with the piece of paper with the word "exam" on it. So, you ate it, of course.',
       reward: () => {
-        rewards.beaker += 1;
+        rewards.flask += 1;
       },
       unreward: () => {},
     },
@@ -196,7 +196,7 @@
         rewards.safetyGoggles = 1;
       },
       unreward: () => {
-        rewards.beaker = 0;
+        rewards.flask = 0;
       },
     },
     {

@@ -21,6 +21,11 @@ var DEBUG = true;
       game.load.image('shelf', 'assets/shelf.png');
 
       game.load.image('picture', 'assets/picture.png');
+      game.load.image('textbook', 'assets/textbook.png');
+      game.load.image('flask', 'assets/flask.png');
+      game.load.image('pencil', 'assets/pencil.png');
+      game.load.image('stick', 'assets/stick.png');
+      game.load.image('phd', 'assets/phd.png');
 
       TextRenderer.preload();
     },
@@ -90,6 +95,14 @@ var DEBUG = true;
       // this.shelf.scale.x = 3;
       // this.shelf.scale.y = 3;
 
+      this.phd = game.add.sprite(100, 200, 'phd');
+      this.phd.scale.x = 3;
+      this.phd.scale.y = 3;
+
+      this.stick = game.add.sprite(310, 250, 'stick');
+      this.stick.scale.x = 3;
+      this.stick.scale.y = 3;
+
       this.desk = game.add.sprite(72, 450, 'desk');
       this.desk.scale.x = 3;
       this.desk.scale.y = 3;
@@ -97,6 +110,18 @@ var DEBUG = true;
       this.picture = game.add.sprite(80, 354, 'picture');
       this.picture.scale.x = 3;
       this.picture.scale.y = 3;
+
+      this.textbook = game.add.sprite(160, 402, 'textbook');
+      this.textbook.scale.x = 3;
+      this.textbook.scale.y = 3;
+
+      this.flask = game.add.sprite(260, 354, 'flask');
+      this.flask.scale.x = 3;
+      this.flask.scale.y = 3;
+
+      this.pencil = game.add.sprite(140, 442, 'pencil');
+      this.pencil.scale.x = 3;
+      this.pencil.scale.y = 3;
 
       // Grid
       this.renderBlock = this.renderBlock.bind(this);
