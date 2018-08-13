@@ -70,20 +70,6 @@ var DEBUG = true;
       this.bgUpdateTime = 800;
       this.bgUpdateCheck = null;
 
-      // Text
-      this.dialogTimeout = null;
-      this.clearText = this.clearText.bind(this);
-      var dialogScale = 2;
-      this.dialogPadding = 8;
-      this.dialogBox = new Phaser.Group(game);
-      this.dialogBoxBg = new Phaser.Sprite(game, 0, 0, 'dialogbox', 0);
-      this.dialogBoxBg.scale.x = dialogScale;
-      this.dialogBoxBg.scale.y = dialogScale;
-      this.dialogBox.addChild(this.dialogBoxBg);
-      this.dialogBox.x = (800 - this.dialogBox.width) / 2;
-      this.dialogBox.y = 60;
-      this.dialogBox.alpha = 0;
-
       // Sprites
       this.window = game.add.sprite(230, 150, 'window', 0);
       this.window.scale.x = 3;
@@ -123,14 +109,28 @@ var DEBUG = true;
       this.pencil.scale.x = 3;
       this.pencil.scale.y = 3;
 
+      // Text
+      this.dialogTimeout = null;
+      this.clearText = this.clearText.bind(this);
+      var dialogScale = 3;
+      this.dialogPadding = 30;
+      this.dialogBox = new Phaser.Group(game);
+      this.dialogBoxBg = new Phaser.Sprite(game, 0, 0, 'dialogbox', 0);
+      this.dialogBoxBg.scale.x = dialogScale;
+      this.dialogBoxBg.scale.y = dialogScale;
+      this.dialogBox.addChild(this.dialogBoxBg);
+      this.dialogBox.x = (800 - this.dialogBox.width) / 2;
+      this.dialogBox.y = 60;
+      this.dialogBox.alpha = 0;
+
       // Grid
       this.renderBlock = this.renderBlock.bind(this);
       this.dropRow = this.dropRow.bind(this);
       this.dropColumn = this.dropColumn.bind(this);
       this.dropBlock = this.dropBlock.bind(this);
       var gridScale = 3;
-      var gridX = 800 - (Grid.size[0] * gridScale * 8 + 80);
-      var gridY = 520;
+      var gridX = 800 - (Grid.size[0] * gridScale * 8 + 120);
+      var gridY = 480;
       this.grid = [];
       this.animationGrid = [];
       Grid.evaluate((function (cell, i, j) {
