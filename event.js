@@ -54,12 +54,12 @@
   const events = [
     {
       skill: Dog.skillIndices.breathing,
-      shape: 2,
+      shape: 1,
       text: 'Hey sweetie, just reminding you to use your diaphragm.',
     },
     {
       skill: Dog.skillIndices.breathing,
-      shape: 4,
+      shape: 3,
       text: 'Popped into the advanced meditation class. Ohmm...',
     },
   ];

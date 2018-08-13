@@ -49,7 +49,7 @@ var DEBUG = true;
       this.inputTime = 200;
       this.inputCheck = null;
 
-      this.eventReadyWillResetTime = 5000;
+      this.eventReadyWillResetTime = 3500;
       this.eventReadyWillReset = null;
 
       this.clearDialogTime = 3000;
@@ -116,12 +116,12 @@ var DEBUG = true;
     update: function () {
       var now = Date.now();
 
-      this.checkInput(now);
-      this.checkEvent(now);
-
       this.updateGrid(now);
       this.updateGridLand(now);
       this.updateDog(now);
+
+      this.checkInput(now);
+      this.checkEvent(now);
 
       this.renderGrid(now);
       this.renderHealth(now);
@@ -170,7 +170,7 @@ var DEBUG = true;
           this.skill = event.skill;
           Grid.start(Blocks.get(this.shape), this.skill);
         } else {
-          this.eventReadyWillReset = now;
+          this.eventReadyWillReset = now + this.eventReadyWillResetTime;
         }
 
         var text = GameEvents.resolve(event);
@@ -180,7 +180,7 @@ var DEBUG = true;
 
       if (
         this.eventReadyWillReset &&
-        this.eventReadyWillReset + this.eventReadyWillResetTime <= now
+        this.eventReadyWillReset <= now
       ) {
         this.eventReady = true;
         this.eventReadyWillReset = null;
@@ -211,13 +211,16 @@ var DEBUG = true;
       var fullColumns = Grid.findOverfilledColumns();
       fullColumns.forEach(this.dropColumn);
 
+      Dog.clearSkills();
+      Grid.evaluate(this.updateSkill);
+
       if (
         !this.eventReady &&
         !this.eventReadyWillReset &&
         Grid.ready() &&
         !fullRows.length
       ) {
-        this.eventReady = true;
+        this.eventReadyWillReset = now + 100;
       }
 
       this.gridLandCheck = now;
@@ -228,8 +231,6 @@ var DEBUG = true;
       if (this.dogUpdateCheck + this.dogUpdateTime > now) return;
 
       Dog.update();
-      Dog.clearSkills();
-      Grid.evaluate(this.updateSkill);
 
       this.dogUpdateCheck = now;
     },
@@ -306,6 +307,7 @@ var DEBUG = true;
 
     clearText() {
       this.dialogBox.alpha = 0;
+      this.dialogBox.removeChild(this.dialog);
     },
   };
 

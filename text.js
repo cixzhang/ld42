@@ -13,7 +13,9 @@
     else if (char === '.') index = 63;
     else if (char === '!') index = 64;
     else if (char === '?') index = 65;
-    else if (char === ' ') index = 66;
+    else if (char === '\'') index = 66;
+    else if (char === '"') index = 67;
+    else if (char === ' ') index = 68;
     else if (code < 65) {
       // numerics
       index = code - 48;
@@ -39,7 +41,7 @@
     let words = String(text).split(' ');
 
     words.forEach((word, i) => {
-      var isNotLast = Number(i !== word.length - 1);
+      var isNotLast = Number(i !== words.length - 1);
       var wordWidth = word.length + isNotLast + sizeX;
 
       if (currentX + wordWidth > width) {
