@@ -121,15 +121,15 @@
     },
     {
       skill: Dog.skillIndices.social,
-      shape: 7,
+      shape: 8,
       text: `You participate in an argument about whether shadows are real.`,
     },
     {
       test: {
         [Dog.skillIndices.social]: 1,
       },
-      success: 'You were able to answer the first question in the exam "Name"',
-      fail: 'You think really hard but couldn\'t answer the first question in the pop quiz "Name"',
+      success: 'You were able to answer the first question in the exam, "Name"',
+      fail: 'You think really hard but couldn\'t answer the first question in the pop quiz, "Name"',
       reward: () => {
         rewards.pencil += 1;
       },
@@ -140,8 +140,8 @@
         [Dog.skillIndices.social]: 4,
         [Dog.skillIndices.dog]: 4,
       },
-      success: 'After getting to know all your classmates and demonstrating your dog prowess, you\'re voted to be the mascot of the Stick Thrower\'s Club.',
-      fail: 'You watch longingly as your classmates throws sticks at each other.',
+      success: 'After getting to know all your classmates and demonstrating your dog prowess, you\'re voted the mascot of the Stick Thrower\'s Club.',
+      fail: 'You watch longingly as your classmates throw sticks at each other.',
       reward: () => {
         rewards.stick += 1;
       },
