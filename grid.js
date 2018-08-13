@@ -138,7 +138,7 @@
   }
 
   function clearRow(index) {
-    const row = blocked.splice(index, 1);
+    const row = blocked.splice(index, 1)[0];
     for (var i = 0; i < row.length; i++) {
       row[i] = null;
     }
