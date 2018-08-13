@@ -23,7 +23,7 @@ var DEBUG = true;
       this.state = 'start';
       this.shape;
       this.skill;
-      Grid.initialize(11, 8);
+      Grid.initialize(8, 8);
 
       Dog.initialize();
       GameEvents.initialize();
