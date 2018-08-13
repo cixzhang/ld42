@@ -16,10 +16,15 @@ var DEBUG = true;
       game.load.spritesheet('palette', 'assets/palette.png', 14, 14);
       game.load.spritesheet('dialogbox', 'assets/dialogbox.png', 160, 40);
 
+      game.load.spritesheet('window', 'assets/window.png', 50, 50);
+      game.load.image('desk', 'assets/desk.png');
+
       TextRenderer.preload();
     },
 
     create: function () {
+      game.stage.backgroundColor = '#53777a';
+
       this.state = 'start';
       this.shape;
       this.skill;
@@ -54,6 +59,9 @@ var DEBUG = true;
 
       this.clearDialogTime = 3000;
 
+      this.bgUpdateTime = 800;
+      this.bgUpdateCheck = null;
+
       // Text
       this.dialogTimeout = null;
       this.clearText = this.clearText.bind(this);
@@ -68,14 +76,25 @@ var DEBUG = true;
       this.dialogBox.y = 60;
       this.dialogBox.alpha = 0;
 
+      // Sprites
+      this.window = game.add.sprite(230, 150, 'window', 0);
+      this.window.scale.x = 3;
+      this.window.scale.y = 3;
+      this.window.animations.add('bg', [0, 1]);
+      this.window.animations.play('bg', 1, true);
+
+      this.desk = game.add.sprite(80, 450, 'desk');
+      this.desk.scale.x = 3;
+      this.desk.scale.y = 3;
+
       // Grid
       this.renderBlock = this.renderBlock.bind(this);
       this.dropRow = this.dropRow.bind(this);
       this.dropColumn = this.dropColumn.bind(this);
       this.dropBlock = this.dropBlock.bind(this);
-      var gridScale = 2;
-      var gridX = (800 - Grid.size[0] * gridScale * 8) / 2;
-      var gridY = 280;
+      var gridScale = 3;
+      var gridX = 800 - (Grid.size[0] * gridScale * 8 + 80);
+      var gridY = 520;
       this.grid = [];
       this.animationGrid = [];
       Grid.evaluate((function (cell, i, j) {
@@ -298,7 +317,7 @@ var DEBUG = true;
         text,
         this.dialogBox.width - 2 * this.dialogPadding,
         this.dialogBox.height - 2 * this.dialogPadding,
-        0xFF0000
+        0x000000
       );
       this.dialog.x = this.dialogPadding;
       this.dialog.y = this.dialogPadding;
