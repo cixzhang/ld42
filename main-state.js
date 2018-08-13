@@ -165,7 +165,7 @@ var DEBUG = true;
           event = GameEvents.generate();
         }
 
-        if (event.shape) {
+        if (event.shape != null) {
           this.shape = event.shape;
           this.skill = event.skill;
           Grid.start(Blocks.get(this.shape), this.skill);
@@ -267,7 +267,11 @@ var DEBUG = true;
     },
 
     dropBlock(block, i, j) {
-      block.frame = this.grid[i][j].frame;
+      var gridFrame = this.grid[i][j].frame;
+      if (gridFrame >= Dog.skillList.length) {
+        gridFrame = 8;
+      }
+      block.frame = gridFrame;
       game.add.tween(block)
         .to(
           {

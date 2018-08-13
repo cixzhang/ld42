@@ -122,8 +122,8 @@
       test: {
         [Dog.skillIndices.social]: 1,
       },
-      success: 'You were able to answer the first question in the exam: "Name"',
-      fail: 'You think really hard but couldn\'t answer the first question in the pop-quiz: "Name"',
+      success: 'You were able to answer the first question in the exam "Name"',
+      fail: 'You think really hard but couldn\'t answer the first question in the pop-quiz "Name"',
       reward: () => {
         rewards.pencil += 1;
       },
@@ -142,8 +142,8 @@
       return _.sample(events);
     },
     resolve: (event) => {
-      if (event.shape) return event.text;
-      if (event.test) {
+      if (event.shape != null) return event.text;
+      if (event.test != null) {
         var passed = _.every(event.test, (val, key) => {
           return Dog.skills[Dog.getSkill(key)] >= val;
         });
