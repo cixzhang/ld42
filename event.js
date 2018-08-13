@@ -29,6 +29,9 @@
       text: '"Hello dear! Before you go off to dog college, let me teach you the most important life skills." Mom',
     },
     {
+      text: 'Use "A", "S", "D" to move the blocks into your skill board. The "W" key will rotate the block clockwise.',
+    },
+    {
       skill: Dog.skillIndices.breathing,
       shape: 1,
       text: '"First, you\'ll want to learn how to breathe." Mom',

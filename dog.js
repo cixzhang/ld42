@@ -28,10 +28,20 @@
       Dog.maxLife = 100;
     },
     update: function update() {
-      if (!skills.breathing || !skills.eating || !skills.pooping) {
+      if (!skills.breathing) {
+        Dog.life = Math.max(Dog.life - 3, 0);
+      }
+
+      if (!skills.eating) {
+        Dog.life = Math.max(Dog.life - 2, 0);
+      }
+
+      if (!skills.pooping) {
         Dog.life = Math.max(Dog.life - 1, 0);
-      } else {
-        Dog.life = Math.min(Dog.life + 1, Dog.maxLife);
+      }
+
+      if (skills.breathing && skills.eating && skills.pooping) {
+        Dog.life = Math.min(Dog.life + 5, Dog.maxLife);
       }
     },
     clearSkills: function clearSkills(idx) {

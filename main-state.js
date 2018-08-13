@@ -30,6 +30,8 @@ var DEBUG = true;
       game.load.image('stick', 'assets/stick.png');
       game.load.image('phd', 'assets/phd.png');
 
+      game.load.image('black', 'assets/black.png');
+
       TextRenderer.preload();
     },
 
@@ -198,7 +200,7 @@ var DEBUG = true;
       }).bind(this));
 
       // Health
-      this.healthBar = game.add.tileSprite(game.width / 4, 8, game.width / 2, 3, 'palette', 28);
+      this.healthBar = game.add.tileSprite(game.width / 4, 20, game.width / 2, 3, 'palette', 28);
       this.healthBar.scale.y = 5;
       this.healthBarAmt = new Phaser.Sprite(game, 1, 1, 'palette', 27);
       this.healthBar.addChild(this.healthBarAmt);
@@ -209,6 +211,11 @@ var DEBUG = true;
       this.tutorial = 0;
       this.eventReady = true;
       this.transformed = false;
+
+      this.black = game.add.sprite(0, 0, 'black');
+      this.black.width = 800;
+      this.black.height = 600;
+      this.black.alpha = 0;
     },
 
     update: function () {
@@ -328,7 +335,9 @@ var DEBUG = true;
       this.dogUpdateCheck = this.dogUpdateCheck || now;
       if (this.dogUpdateCheck + this.dogUpdateTime > now) return;
 
-      Dog.update();
+      if (this.tutorial >= GameEvents.startEvents.length) {
+        Dog.update();
+      }
 
       if (GameEvents.rewards.phd && this.childDog.alpha && !this.transformed) {
         this.childDog.alpha = 0;
@@ -337,6 +346,12 @@ var DEBUG = true;
         this.adultDog.animations.currentAnim.onComplete.addOnce(() => {
           this.transformed = true;
         });
+      }
+
+
+      if (Dog.life <= 0) {
+        game.add.tween(this.black).to({ alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0)
+          .onComplete.addOnce(() => { game.state.start('credit'); });
       }
 
       this.dogUpdateCheck = now;
