@@ -4,11 +4,10 @@
     beaker: 0,
     pencil: 0,
     textbook: 0,
-    safetyGoggles: 0,
     stick: 0,
     phd: 0,
     mayorHat: 0,
-    dogTreat: 0,
+    safetyGoggles: 0,
   };
 
   function clearRewards() {

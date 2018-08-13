@@ -18,6 +18,9 @@ var DEBUG = true;
 
       game.load.spritesheet('window', 'assets/window.png', 50, 50);
       game.load.image('desk', 'assets/desk.png');
+      game.load.image('shelf', 'assets/shelf.png');
+
+      game.load.image('picture', 'assets/picture.png');
 
       TextRenderer.preload();
     },
@@ -83,9 +86,17 @@ var DEBUG = true;
       this.window.animations.add('bg', [0, 1]);
       this.window.animations.play('bg', 1, true);
 
-      this.desk = game.add.sprite(80, 450, 'desk');
+      // this.shelf = game.add.sprite(85, 273, 'shelf');
+      // this.shelf.scale.x = 3;
+      // this.shelf.scale.y = 3;
+
+      this.desk = game.add.sprite(72, 450, 'desk');
       this.desk.scale.x = 3;
       this.desk.scale.y = 3;
+
+      this.picture = game.add.sprite(80, 354, 'picture');
+      this.picture.scale.x = 3;
+      this.picture.scale.y = 3;
 
       // Grid
       this.renderBlock = this.renderBlock.bind(this);
