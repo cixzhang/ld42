@@ -129,7 +129,7 @@
         [Dog.skillIndices.social]: 1,
       },
       success: 'You were able to answer the first question in the exam "Name"',
-      fail: 'You think really hard but couldn\'t answer the first question in the pop-quiz "Name"',
+      fail: 'You think really hard but couldn\'t answer the first question in the pop quiz "Name"',
       reward: () => {
         rewards.pencil += 1;
       },

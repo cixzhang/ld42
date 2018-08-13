@@ -16,9 +16,12 @@ var DEBUG = true;
       game.load.spritesheet('palette', 'assets/palette.png', 14, 14);
       game.load.spritesheet('dialogbox', 'assets/dialogbox.png', 160, 40);
 
+      game.load.spritesheet('dog', 'assets/dog.png', 64, 64);
+
       game.load.spritesheet('window', 'assets/window.png', 50, 50);
       game.load.image('desk', 'assets/desk.png');
       game.load.image('shelf', 'assets/shelf.png');
+      game.load.image('skillboard', 'assets/skillboard.png');
 
       game.load.image('picture', 'assets/picture.png');
       game.load.image('textbook', 'assets/textbook.png');
@@ -77,6 +80,15 @@ var DEBUG = true;
       this.window.animations.add('bg', [0, 1]);
       this.window.animations.play('bg', 1, true);
 
+      this.skillboard = game.add.sprite(437, 255, 'skillboard');
+      this.skillboard.scale.x = 3;
+      this.skillboard.scale.y = 3;
+
+      this.skillHeader = TextRenderer.makeTextSprite('Skill Board', 300, 50, 0x556270);
+      this.skillHeader.x = 537;
+      this.skillHeader.y = 525;
+      game.world.addChild(this.skillHeader);
+
       // this.shelf = game.add.sprite(85, 273, 'shelf');
       // this.shelf.scale.x = 3;
       // this.shelf.scale.y = 3;
@@ -88,6 +100,14 @@ var DEBUG = true;
       this.stick = game.add.sprite(310, 250, 'stick');
       this.stick.scale.x = 3;
       this.stick.scale.y = 3;
+
+      this.childDog = game.add.sprite(125, 263, 'dog', 0);
+      this.childDog.scale.x = 3;
+      this.childDog.scale.y = 3;
+      this.childDog.animations.add('sit', [0, 1, 2, 3, 4, 5, 6, 7, 8]);
+      this.childDog.animations.add('goggles', [36, 37, 38, 39, 40, 41, 42, 43, 44]);
+      this.childDog.animations.add('hat', [45, 46, 47, 48, 49, 50, 51, 52, 53]);
+      this.childDog.animations.add('all', [54, 55, 56, 57, 58, 59, 60, 61, 62]);
 
       this.desk = game.add.sprite(72, 450, 'desk');
       this.desk.scale.x = 3;
@@ -108,6 +128,17 @@ var DEBUG = true;
       this.pencil = game.add.sprite(140, 442, 'pencil');
       this.pencil.scale.x = 3;
       this.pencil.scale.y = 3;
+
+      this.adultDog = game.add.sprite(125, 300, 'dog', 0);
+      this.adultDog.scale.x = 5;
+      this.adultDog.scale.y = 5;
+      this.adultDog.animations.add('stand', [27, 28, 29, 30, 31, 32, 33, 34, 35]);
+      this.adultDog.animations.add('hat', [63, 64, 65, 66, 67, 68, 69, 70, 71]);
+      this.adultDog.animations.add('transform', [
+        9, 10, 11, 12, 13, 14, 15, 16, 17,
+        18, 19, 20, 21, 23, 24, 25, 26
+      ]);
+      this.adultDog.alpha = 0;
 
       // Text
       this.dialogTimeout = null;
@@ -132,10 +163,20 @@ var DEBUG = true;
       var gridX = 800 - (Grid.size[0] * gridScale * 8 + 120);
       var gridY = 480;
       this.grid = [];
+      this.gridBG = [];
       this.animationGrid = [];
       Grid.evaluate((function (cell, i, j) {
         this.grid[i] = this.grid[i] || [];
+        this.gridBG[i] = this.gridBG[i] || [];
         this.animationGrid[i] = this.animationGrid[i] || [];
+        this.gridBG[i][j] = game.add.sprite(
+          gridX + (j * (8 * gridScale + 1)),
+          gridY - (i * (8 * gridScale + 1)),
+          'blocks',
+          i >= Grid.size[1] ? 8 : 6,
+        );
+        this.gridBG[i][j].width = 8 * gridScale;
+        this.gridBG[i][j].height = 8 * gridScale;
         this.grid[i][j] = game.add.sprite(
           gridX + (j * (8 * gridScale + 1)),
           gridY - (i * (8 * gridScale + 1)),
@@ -158,6 +199,7 @@ var DEBUG = true;
 
       // Health
       this.healthBar = game.add.tileSprite(game.width / 4, 8, game.width / 2, 3, 'palette', 28);
+      this.healthBar.scale.y = 5;
       this.healthBarAmt = new Phaser.Sprite(game, 1, 1, 'palette', 27);
       this.healthBar.addChild(this.healthBarAmt);
       this.healthBarAmt.height = 1;
@@ -166,6 +208,7 @@ var DEBUG = true;
       // Events
       this.tutorial = 0;
       this.eventReady = true;
+      this.transformed = false;
     },
 
     update: function () {
@@ -178,10 +221,10 @@ var DEBUG = true;
       this.checkInput(now);
       this.checkEvent(now);
 
+      this.renderDog(now);
       this.renderGrid(now);
       this.renderHealth(now);
-
-      Grid.print();
+      this.renderRewards(now);
     },
 
     checkInput(now) {
@@ -287,6 +330,15 @@ var DEBUG = true;
 
       Dog.update();
 
+      if (GameEvents.rewards.phd && this.childDog.alpha && !this.transformed) {
+        this.childDog.alpha = 0;
+        this.adultDog.alpha = 1;
+        this.adultDog.animations.play('transform', 8, false)
+        this.adultDog.animations.currentAnim.onComplete.addOnce(() => {
+          this.transformed = true;
+        });
+      }
+
       this.dogUpdateCheck = now;
     },
 
@@ -295,13 +347,38 @@ var DEBUG = true;
       Dog.skills[Dog.getSkill(idx)] += 1;
     },
 
+    renderDog(now) {
+      if (!this.transformed) {
+        var frame = 'sit';
+        if (GameEvents.rewards.mayorHat) {
+          frame = 'hat';
+        }
+        if (GameEvents.rewards.safetyGoggles) {
+          frame = 'goggles';
+        }
+        if (GameEvents.rewards.mayorHat && GameEvents.rewards.safetyGoggles) {
+          frame = 'all';
+        }
+
+        this.childDog.animations.play(frame, 8, true);
+      } else {
+        var frame = 'stand';
+        if (GameEvents.rewards.mayorHat) {
+          frame = 'hat';
+        }
+        this.adultDog.animations.play(frame, 8, true);
+        this.adultDog.x = 125;
+        this.adultDog.y = 285;
+      }
+    },
+
     renderGrid(now) {
       Grid.evaluate(this.renderBlock);
       Grid.evaluateShape(this.renderBlock);
     },
 
     renderBlock(cell, i, j) {
-      this.grid[i][j].frame = cell != null ? cell : Dog.skillList.length + (i >= Grid.size[1]);
+      this.grid[i][j].frame = cell != null ? cell : Dog.skillList.length + (2 * (i >= Grid.size[1]));
     },
 
     dropRow(i) {
@@ -323,9 +400,6 @@ var DEBUG = true;
 
     dropBlock(block, i, j) {
       var gridFrame = this.grid[i][j].frame;
-      if (gridFrame >= Dog.skillList.length) {
-        gridFrame = 8;
-      }
       block.frame = gridFrame;
       game.add.tween(block)
         .to(
@@ -343,6 +417,7 @@ var DEBUG = true;
     },
 
     renderHealth(now) {
+      this.healthBar.alpha = !(Dog.life === Dog.maxLife);
       this.healthBarAmt.width = (this.healthBar.width - 1) * Math.max(Dog.life / Dog.maxLife, 0);
     },
 
@@ -368,6 +443,14 @@ var DEBUG = true;
       this.dialogBox.alpha = 0;
       this.dialogBox.removeChild(this.dialog);
     },
+
+    renderRewards() {
+      _.forEach(GameEvents.rewards, (val, key) => {
+        if (this[key]) {
+          this[key].alpha = Math.sign(val);
+        }
+      });
+    }
   };
 
   window.mainState = mainState;

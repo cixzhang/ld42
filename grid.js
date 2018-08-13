@@ -52,7 +52,7 @@
     if (tryLand()) {
       return;
     }
-    cy -= 1;
+    cy = Math.max(cy - 1, 0);
   }
 
   function detect() {
