@@ -13,13 +13,13 @@ var creditState = {
 
     var gameOverText = 'Game Over';
     var forgotten = [];
-    if (Dog.skills.breathing === 0) {
+    if (mainState.gameOverState.breathing === 0) {
       forgotten.push('breathe');
     }
-    if (Dog.skills.eating === 0) {
+    if (mainState.gameOverState.eating === 0) {
       forgotten.push('eat');
     }
-    if (Dog.skills.pooping === 0) {
+    if (mainState.gameOverState.pooping === 0) {
       forgotten.push('poop');
     }
     var gameOverReason = 'You forgot how to ';

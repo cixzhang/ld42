@@ -16,8 +16,8 @@
   function initialize(x, y) {
     size[0] = x;
     size[1] = y;
-    cx = 0;
-    cy = 0;
+    cx = Math.floor(size[0] / 2);
+    cy = size[1] + 2;
     cShape = null;
 
     for (var i = 0; i < y + addHeight; i++) {
@@ -40,10 +40,10 @@
 
   function move(dx) {
     if (dx > 0 && !touch.right) {
-      cx += 1;
+      cx = Math.min(cx + 1, size[0] - 1);
     }
     if (dx < 0 && !touch.left) {
-      cx -= 1;
+      cx = Math.max(cx - 1, 0);
     }
   }
 
@@ -53,6 +53,28 @@
       return;
     }
     cy = Math.max(cy - 1, 0);
+  }
+
+  function updateIslands() {
+    var islands = Islands.detect(
+      blocked,
+      // isLand
+      (cell, i, j) => {
+        return cell != null;
+      },
+      // isGround
+      (cell, i, j) => {
+        return i === 0;
+      });
+
+    islands.forEach((island) => {
+      if (island.ground.value) return;
+
+      _.sortBy(island.children, 0).forEach((coord) => {
+        blocked[coord[0] - 1][coord[1]] = blocked[coord[0]][coord[1]];
+        blocked[coord[0]][coord[1]] = null;
+      });
+    });
   }
 
   function detect() {
@@ -182,6 +204,7 @@
     start: start,
     move: move,
     update: update,
+    updateIslands: updateIslands,
     tryLand: tryLand,
     detect: detect,
     check: check,

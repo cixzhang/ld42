@@ -56,7 +56,7 @@ var DEBUG = true;
       });
 
       // Timers
-      this.gridUpdateTime = 2000;
+      this.gridUpdateTime = 1800;
       this.gridUpdateCheck = null;
       this.gridLandTime = 900;
       this.gridLandCheck = null;
@@ -211,6 +211,7 @@ var DEBUG = true;
       this.tutorial = 0;
       this.eventReady = true;
       this.transformed = false;
+      this.gameOverState = null;
 
       this.black = game.add.sprite(0, 0, 'black');
       this.black.width = 800;
@@ -239,15 +240,18 @@ var DEBUG = true;
       if (this.inputCheck + this.inputTime > now) return;
       if (this.cursor.down.isDown) {
         Grid.update();
+        Grid.detect();
         Grid.tryLand();
         this.inputCheck = now;
       }
 
       if (this.cursor.left.isDown) {
         Grid.move(-1);
+        Grid.detect();
         this.inputCheck = now;
       } else if (this.cursor.right.isDown) {
         Grid.move(1);
+        Grid.detect();
         this.inputCheck = now;
       }
 
@@ -293,13 +297,11 @@ var DEBUG = true;
     },
 
     updateGrid(now) {
-      // always detect for collision
-      Grid.detect();
-
       this.gridUpdateCheck = this.gridUpdateCheck || now;
       if (this.gridUpdateCheck + this.gridUpdateTime > now) return;
 
       Grid.update();
+      Grid.detect();
 
       this.gridUpdateCheck = now;
     },
@@ -308,6 +310,7 @@ var DEBUG = true;
       this.gridLandCheck = this.gridLandCheck || now;
       if (this.gridLandCheck + this.gridLandTime > now) return;
 
+      Grid.updateIslands();
       Grid.tryLand();
 
       var fullRows = Grid.findFullRows();
@@ -350,8 +353,7 @@ var DEBUG = true;
 
 
       if (Dog.life <= 0) {
-        game.add.tween(this.black).to({ alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0)
-          .onComplete.addOnce(() => { game.state.start('credit'); });
+        this.gameOver();
       }
 
       this.dogUpdateCheck = now;
@@ -465,6 +467,14 @@ var DEBUG = true;
           this[key].alpha = Math.sign(val);
         }
       });
+    },
+
+    gameOver() {
+      if (this.gameOverState) return;
+      game.add.tween(this.black).to({ alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0)
+        .onComplete.addOnce(() => { game.state.start('credit'); });
+      // clone skills so we don't update during game over
+      this.gameOverState = {...Dog.skills};
     }
   };
 

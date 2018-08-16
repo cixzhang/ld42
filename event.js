@@ -215,6 +215,13 @@
     },
   ];
 
+  const livingEvents = [
+    events[0],
+    events[1],
+    events[2],
+    events[3],
+  ];
+
   window.GameEvents = {
     rewards,
     startEvents,
@@ -223,7 +230,13 @@
       clearRewards();
     },
     generate: () => {
-      return _.sample(events);
+      var samplingEvents = events;
+      if (!Dog.skills.breathing || !Dog.skills.eating || !Dog.skills.pooping) {
+        if (Math.random() > 0.5) {
+          samplingEvents = livingEvents;
+        }
+      }
+      return _.sample(samplingEvents);
     },
     resolve: (event) => {
       if (event.shape != null) return event.text;
