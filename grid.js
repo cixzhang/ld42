@@ -39,20 +39,24 @@
   }
 
   function move(dx) {
+    detect();
     if (dx > 0 && !touch.right) {
       cx = Math.min(cx + 1, size[0] - 1);
     }
     if (dx < 0 && !touch.left) {
       cx = Math.max(cx - 1, 0);
     }
+    detect();
   }
 
   function update() {
+    detect();
     if (!cShape) return;
     if (tryLand()) {
       return;
     }
     cy = Math.max(cy - 1, 0);
+    detect();
   }
 
   function updateIslands() {

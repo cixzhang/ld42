@@ -240,26 +240,25 @@ var DEBUG = true;
       if (this.inputCheck + this.inputTime > now) return;
       if (this.cursor.down.isDown) {
         Grid.update();
-        Grid.detect();
         Grid.tryLand();
         this.inputCheck = now;
       }
 
       if (this.cursor.left.isDown) {
         Grid.move(-1);
-        Grid.detect();
         this.inputCheck = now;
       } else if (this.cursor.right.isDown) {
         Grid.move(1);
-        Grid.detect();
         this.inputCheck = now;
       }
 
       if (this.cursor.rotateCW.isDown || this.cursor.up.isDown) {
         Blocks.rotateCW(Blocks.get(this.shape), Grid.check);
+        Grid.detect();
         this.inputCheck = now;
       } else if (this.cursor.rotateCCW.isDown) {
         Blocks.rotateCCW(Blocks.get(this.shape), Grid.check);
+        Grid.detect();
         this.inputCheck = now;
       }
     },
@@ -301,7 +300,6 @@ var DEBUG = true;
       if (this.gridUpdateCheck + this.gridUpdateTime > now) return;
 
       Grid.update();
-      Grid.detect();
 
       this.gridUpdateCheck = now;
     },
