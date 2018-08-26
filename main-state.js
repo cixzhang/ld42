@@ -238,6 +238,8 @@ var DEBUG = true;
     checkInput(now) {
       this.inputCheck = this.inputCheck || now;
       if (this.inputCheck + this.inputTime > now) return;
+      if (!this.shape) return;
+
       if (this.cursor.down.isDown) {
         Grid.update();
         Grid.tryLand();
